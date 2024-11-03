@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState,useEffect,useRef } from "react";
 import Tags from "../common/Tags"; // Adjust the import path based on your file structure
 import ContinueButton from "../common/ContinueButton";
 import { useDispatch,useSelector } from "react-redux";
@@ -10,9 +10,13 @@ const Ingredients = ({ nextStep, prevStep, updateFormData,data }) => {
   const { ingredients, ingredientsLoading, ingredientsError } = useSelector(
     (state) => state.recipes
   );
+  const fetchContent=useRef(false);
   // Fetch ingredients on component mount
   useEffect(() => {
-    dispatch(fetchIngredients());
+    if(!fetchContent.current){
+      dispatch(fetchIngredients());
+      fetchContent.current=true;
+      }
   }, [dispatch]);
 
  

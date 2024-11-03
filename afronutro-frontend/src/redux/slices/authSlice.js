@@ -183,6 +183,9 @@ export const activateUser = createAsyncThunk(
 
 
 
+
+
+
 const authSlice = createSlice({
   name: "auth",
   initialState: {
@@ -219,7 +222,12 @@ const authSlice = createSlice({
     clearResendVerificationStatus: (state) => {
       state.resendVerificationStatus = null;
       state.resendVerificationError = null;
-    }
+    },
+    handleRegistrationSuccess: (state) => {
+      localStorage.removeItem("token");
+      state.token = null;
+      state.isAuthenticated = false;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -316,5 +324,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { clearError, clearResetStatus, clearPasswordChangeStatus,clearVerificationStatus,clearResendVerificationStatus } = authSlice.actions;
+export const { clearError, clearResetStatus, clearPasswordChangeStatus,clearVerificationStatus,clearResendVerificationStatus,handleRegistrationSuccess } = authSlice.actions;
 export default authSlice.reducer;

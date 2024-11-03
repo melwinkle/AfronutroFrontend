@@ -161,7 +161,17 @@ const Recipes = () => {
   // Render recipes, spinner, or error
   const renderRecipes = () => {
     if (loading) {
-      return <Spinner />; // Render a spinner during loading
+      return (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+          {[1, 2, 3].map((placeholder) => (
+            <div key={placeholder} className="border rounded-lg p-4 animate-pulse">
+              <div className="w-full h-48 bg-gray-200 rounded-md"></div>
+              <div className="h-4 bg-gray-200 rounded mt-4 w-3/4"></div>
+              <div className="h-4 bg-gray-200 rounded mt-2 w-1/2"></div>
+            </div>
+          ))}
+        </div>
+      );// Render a spinner during loading
     }
 
     if (error) {

@@ -37,6 +37,8 @@ const topRatings = sortedRatings.slice(0, 4);
 
     // Refresh ratings
     dispatch(fetchRecipeRating(recipeId));
+    // relaod the page
+    window.location.reload();
   };
 
   useEffect(() => {

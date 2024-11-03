@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useEffect,useRef} from "react";
 import { Link } from "react-router-dom";
 import fruits from "../../assets/images/fruitsv1.png";
 import plan from "../../assets/images/afronutroplanning.png";
@@ -8,8 +8,22 @@ import phone from "../../assets/images/afronutromobile.png"
 import CustomButton from "../common/CustomButton";
 import MissionCards from "../common/MissionCard";
 import ContentCard from "../common/ContentCard";
+import { useDispatch,useSelector } from "react-redux";
+import { fetchEducationalContent } from "../../redux/slices/contentSlice";
 
 const Home = () => {
+  const dispatch = useDispatch();
+  const { contentList, loading, error } = useSelector((state) => state.content);
+  const fetchContent=useRef(false);
+  
+  // Fetch content on mount
+  useEffect(() => {
+    if(!fetchContent.current){
+      dispatch(fetchEducationalContent());
+      fetchContent.current=true;
+      }
+
+  }, [dispatch]);
   
 
   return (
@@ -109,11 +123,42 @@ const Home = () => {
           Expand Your Nutrition Knowledge
         </h2>
         </div>
-        <div className="grid grid-cols-3 mx-4 p-4 gap-8">
-          <ContentCard img={fruits} title="Benefits of peppers in Ghanaian dishes" id="fruits">Peppers have jadfkj psbhdfos fpj h;sohfsf hwfvksgf s lsbf kjlf shls llhsiulfh lshf dfhl sahfl dbflsabil h dslfbi lslnfpshfb lksjdfb lsifbiulksjydfilsgflsgf </ContentCard>
-          <ContentCard img={fruits} title="Benefits of peppers in Ghanaian dishes" id={2}>Peppers have jadfkj psbhdfos fpj h;sohfsf hwfvksgf s lsbf kjlf shls llhsiulfh lshf dfhl sahfl dbflsabil h dslfbi lslnfpshfb lksjdfb lsifbiulksjydfilsgflsgf </ContentCard>
-          <ContentCard img={fruits} title="Benefits of peppers in Ghanaian dishes" id={3}>Peppers have jadfkj psbhdfos fpj h;sohfsf hwfvksgf s lsbf kjlf shls llhsiulfh lshf dfhl sahfl dbflsabil h dslfbi lslnfpshfb lksjdfb lsifbiulksjydfilsgflsgf </ContentCard>
+        
+          {loading?(
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+      {[1, 2, 3].map((placeholder) => (
+        <div key={placeholder} className="border rounded-lg p-4 animate-pulse">
+          <div className="w-full h-48 bg-gray-200 rounded-md"></div>
+          <div className="h-4 bg-gray-200 rounded mt-4 w-3/4"></div>
+          <div className="h-4 bg-gray-200 rounded mt-2 w-1/2"></div>
         </div>
+      ))}
+    </div>
+  ):(
+
+
+
+  
+
+    contentList.length>0? ( 
+          contentList.slice(0,3).map((content, index) => (
+
+
+      <ContentCard 
+        key={index}
+        title={content.title} 
+        img={fruits} 
+        id={content.content_id}
+      >
+        {content.description}
+      </ContentCard>
+    ))):(
+  <div className="grid grid-cols-3 mx-4 p-4 gap-8">
+    <ContentCard img={fruits} title="Benefits of peppers in Ghanaian dishes" id="fruits">Peppers have jadfkj psbhdfos fpj h;sohfsf hwfvksgf s lsbf kjlf shls llhsiulfh lshf dfhl sahfl dbflsabil h dslfbi lslnfpshfb lksjdfb lsifbiulksjydfilsgflsgf </ContentCard>
+    <ContentCard img={fruits} title="Benefits of peppers in Ghanaian dishes" id={2}>Peppers have jadfkj psbhdfos fpj h;sohfsf hwfvksgf s lsbf kjlf shls llhsiulfh lshf dfhl sahfl dbflsabil h dslfbi lslnfpshfb lksjdfb lsifbiulksjydfilsgflsgf </ContentCard>
+    <ContentCard img={fruits} title="Benefits of peppers in Ghanaian dishes" id={3}>Peppers have jadfkj psbhdfos fpj h;sohfsf hwfvksgf s lsbf kjlf shls llhsiulfh lshf dfhl sahfl dbflsabil h dslfbi lslnfpshfb lksjdfb lsifbiulksjydfilsgflsgf </ContentCard>
+  </div>))}
+  
 
       </section>
     </div>

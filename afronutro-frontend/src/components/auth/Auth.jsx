@@ -2,11 +2,15 @@ import React, { useState } from 'react';
 import { Modal, Button } from 'flowbite-react';
 import logo from "../../assets/images/afronutrologov2.png"
 import { useNavigate } from 'react-router-dom';
+import CustomButton from '../common/CustomButton';
+import { useDispatch } from 'react-redux';
+import { handleRegistrationSuccess } from '../../redux/slices/authSlice';
 
 const AuthModal = ({ isOpen, onClose, LoginComponent, RegisterComponent }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [isRegistered, setIsRegistered] = useState(false);
   const navigate=useNavigate()
+  const dispatch = useDispatch();
 
   const resetForm = () => {
     setIsRegistered(false);
@@ -15,12 +19,13 @@ const AuthModal = ({ isOpen, onClose, LoginComponent, RegisterComponent }) => {
 
   const handleRegisterSuccess = () => {
     setIsRegistered(true);
-    navigate("/verify-email")
+    dispatch(handleRegistrationSuccess());
   };
 
   const handleLoginSuccess = () => {
     onClose();
   };
+
 
   return (
     <Modal show={isOpen} onClose={() => { onClose(); resetForm(); }}>
@@ -39,7 +44,10 @@ const AuthModal = ({ isOpen, onClose, LoginComponent, RegisterComponent }) => {
         {isRegistered ? (
           <div className="text-center">
             <p className="text-xl mb-4">Your account has been successfully created!</p>
-            <Button onClick={() => setIsLogin(true)}>Proceed to Login</Button>
+            <p> We've sent a verification email to your registered email address.
+            Please check your inbox and click on the verification link to activate your account. </p>
+            <CustomButton onClick={resetForm}>Proceed to Login</CustomButton>
+
           </div>
         ) : (
           isLogin ? (

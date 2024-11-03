@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef} from "react";
 import Tags from "../common/Tags";
 import ContinueButton from "../common/ContinueButton";
 import taco from "../../assets/images/Taco.svg";
@@ -9,13 +9,19 @@ import { useDispatch,useSelector } from "react-redux";
 const ActivityLevel = ({ nextStep, prevStep, updateFormData, data }) => {
   const dispatch = useDispatch();
   const {activityLevels} = useSelector((state) => state.data);
+  // useRef const fetchContent=useRef(false);
+  const fetchContent=useRef(false);
+
 
 
   
 
   // Fetch activity levels when the component mounts
   useEffect(() => {
-    dispatch(fetchActivityLevel());
+    if (!fetchContent.current) {
+      dispatch(fetchActivityLevel());
+      fetchContent.current = true;
+      }
   }, [dispatch]);
 
   // const activityLevels = [

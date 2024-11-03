@@ -1,15 +1,18 @@
-import React, { useState,useEffect } from 'react';
-import { Button, TextInput, Label, Spinner, Select } from 'flowbite-react';
+import React, { useState, useEffect } from 'react';
+import { Button, TextInput, Label, Spinner, Select,Datepicker } from 'flowbite-react';
 import CustomButton from '../common/CustomButton';
 import { useDispatch, useSelector } from 'react-redux';
 import { registerUser, clearError } from '../../redux/slices/authSlice.js';
 import { validateEmail, validatePassword, validateUsername } from '../../utils/helper.js';
-import { calculateBMI,calculateTDEE } from '../../utils/helper.js';
+import { calculateBMI, calculateTDEE } from '../../utils/helper.js';
+import { format } from 'date-fns';
+import PasswordInputChecker from '../common/PasswordInputChecker.jsx';
+
 
 const Register = ({ onRegisterSuccess }) => {
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
-  const [age, setAge] = useState('');
+  const [dateOfBirth, setDateOfBirth] = useState(new Date()); // Changed from age to dateOfBirth
   const [gender, setGender] = useState('');
   const [weight, setWeight] = useState('');
   const [height, setHeight] = useState('');
@@ -21,8 +24,99 @@ const Register = ({ onRegisterSuccess }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [validationError, setValidationError] = useState('');
 
+
+  const dob=format(new Date(dateOfBirth), 'yyyy-MM-dd')
+
+
   const dispatch = useDispatch();
   const { loading, error, isAuthenticated } = useSelector((state) => state.auth);
+
+  const customTheme = {
+    root: {
+      base: "relative",
+    },
+    popup: {
+      root: {
+        base: "absolute top-10 z-50 block pt-2",
+        inline: "relative top-0 z-auto",
+        inner: "inline-block rounded-lg bg-white p-4 shadow-lg dark:bg-gray-700",
+      },
+      header: {
+        base: "",
+        title: "px-2 py-3 text-center font-semibold text-gray-900 dark:text-white",
+        selectors: {
+          base: "mb-2 flex justify-between",
+          button: {
+            base: "rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600",
+            prev: "",
+            next: "",
+            view: "",
+          },
+        },
+      },
+      view: {
+        base: "p-1",
+      },
+      footer: {
+        base: "mt-2 flex space-x-2",
+        button: {
+          base: "w-full rounded-lg px-5 py-2 text-center text-sm font-medium focus:ring-4 focus:ring-cyan-300",
+          today: "bg-cyan-700 text-white hover:bg-cyan-800 dark:bg-cyan-600 dark:hover:bg-cyan-700",
+          clear: "border border-gray-300 bg-white text-gray-900 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600",
+        },
+      },
+    },
+    views: {
+      days: {
+        header: {
+          base: "mb-1 grid grid-cols-7",
+          title: "h-6 text-center text-sm font-medium leading-6 text-gray-500 dark:text-gray-400",
+        },
+        items: {
+          base: "grid w-64 grid-cols-7",
+          item: {
+            base: "block flex-1 cursor-pointer rounded-lg border-0 text-center text-sm font-semibold leading-9 text-gray-900 bg-white hover:none outline-none dark:bg-gray-800 dark:text-white dark:hover:bg-gray-600", // Updated normal state
+            selected: "bg-afro-green text-white text-center text-right leading-9 outline-none shadow-none", // Selected state
+            disabled: "text-gray-500", // Disabled state
+          },
+        },
+      },
+      months: {
+        items: {
+          base: "grid w-64 grid-cols-4",
+          item: {
+            base: "block flex-1 cursor-pointer rounded-lg border-0 text-center text-sm font-semibold leading-9 text-gray-900 bg-white hover:bg-gray-300 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-600", // Normal state
+            selected: "bg-afro-green text-white hover:bg-blue-600", // Selected state
+            disabled: "text-gray-500", // Disabled state
+          },
+        },
+      },
+      years: {
+        items: {
+          base: "grid w-64 grid-cols-4",
+          item: {
+            base: "block flex-1 cursor-pointer rounded-lg border-0 text-center text-sm font-semibold leading-9 text-gray-900 bg-white hover:bg-gray-300 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-600", // Normal state
+            selected: "bg-afro-green text-white hover:bg-blue-600", // Selected state
+            disabled: "text-gray-500", // Disabled state
+          },
+        },
+      },
+      decades: {
+        items: {
+          base: "grid w-64 grid-cols-4",
+          item: {
+            base: "block flex-1 cursor-pointer rounded-lg border-0 text-center text-sm font-semibold leading-9 text-gray-900 bg-white hover:bg-gray-300 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-600", // Normal state
+            selected: "bg-afro-green text-white hover:bg-blue-600", // Selected state
+            disabled: "text-gray-500", // Disabled state
+          },
+        },
+      },
+    },
+  };
+  
+  
+  
+  
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -36,10 +130,17 @@ const Register = ({ onRegisterSuccess }) => {
     };
   }, [dispatch]);
 
+  const isPasswordValid = () => {
+    return password.length >= 8 && 
+           /\d/.test(password) && 
+           /[!@#$%^&*(),.?":{}|<>]/.test(password) &&
+           /[A-Z]/.test(password) &&
+           /[a-z]/.test(password);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setValidationError('');
-
 
     // Validate inputs
     if (!validateEmail(email)) {
@@ -50,7 +151,7 @@ const Register = ({ onRegisterSuccess }) => {
       setValidationError('Username must be 3-20 characters long and contain only letters and numbers');
       return;
     }
-    if (!validatePassword(password)) {
+    if (!isPasswordValid()) {
       setValidationError('Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, and a number');
       return;
     }
@@ -60,43 +161,62 @@ const Register = ({ onRegisterSuccess }) => {
     }
 
     const registrationData = {
-      email:email,
-      username:username,
-      age:age,
-      gender:gender,
-      weight:weight,
-      height:height,
-      activity_levels:activity_level,
-      password:password,
-      password2:password2,
-      tdee:calculateBMI(height,weight),
-      bmi:calculateTDEE(weight, height, age, gender,activity_level),
+      email: email,
+      username: username,
+      date_of_birth: dob, // Updated to use date_of_birth
+      gender: gender,
+      weight: weight,
+      height: height,
+      activity_levels: activity_level,
+      password: password,
+      password2: password2,
+      bmi: calculateBMI(height, weight),
+      tdee: calculateTDEE(weight, height, dateOfBirth, gender, activity_level), // Updated to pass dateOfBirth
     };
 
     dispatch(registerUser(registrationData));
   };
 
-  
+  const handleDateOfBirthChange = (selectedDate) => {
+    setDateOfBirth(selectedDate);
+    
+    // Age validation
+    if (selectedDate) {
+      const today = new Date();
+      let age = today.getFullYear() - selectedDate.getFullYear(); // Change const to let
+      const monthDiff = today.getMonth() - selectedDate.getMonth();
+
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < selectedDate.getDate())) {
+        age--;
+      }
+
+      if (age < 12) {
+        setValidationError('You must be at least 12 years old to register');
+      } else {
+        setValidationError(''); // Clear the error if the age is valid
+      }
+    }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {/* Email */}
       {validationError && <div className="text-red-500">{validationError}</div>}
-      {error && <div className="text-red-500">{error}</div>}
+      {error && <div className="text-red-500">Error with the registration. please try again!</div>}
       <div className="grid grid-cols-2 gap-4">
-      <div>
-        <Label htmlFor="email">Email</Label>
-        <TextInput
-          id="email"
-          type="email"
-          placeholder="name@company.com"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-         </div>
+        <div>
+          <Label htmlFor="email">Email</Label>
+          <TextInput
+            id="email"
+            type="email"
+            placeholder="name@company.com"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
 
-         <div>
+        <div>
           <Label htmlFor="username">Username</Label>
           <TextInput
             id="username"
@@ -109,38 +229,34 @@ const Register = ({ onRegisterSuccess }) => {
         </div>
       </div>
 
-      {/* Username and Age */}
+      {/* Date of Birth and Gender */}
       <div className="grid grid-cols-2 gap-4">
-        
         <div>
-          <Label htmlFor="age">Age</Label>
-          <TextInput
-            id="age"
-            type="number"
-            placeholder="Age"
-            required
-            value={age}
-            onChange={(e) => setAge(e.target.value)}
-          />
+          <Label htmlFor="dateOfBirth">Date of Birth</Label>
+          <Datepicker id="dob"
+          autoHide={false}
+          selected={dateOfBirth}
+          theme={customTheme}
+          onChange={handleDateOfBirthChange}
+          className="bg-gray-100 border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-blue-500 focus:border-blue-500" // Customize with Tailwind CSS classes
+          placeholderText="Select a date"/>
+          
         </div>
         <div>
-        <Label htmlFor="gender">Gender</Label>
-        <Select
-          id="gender"
-          required
-          value={gender}
-          onChange={(e) => setGender(e.target.value)}
-        >
-          <option value="">Select Gender</option>
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-          <option value="other">Other</option>
-        </Select>
+          <Label htmlFor="gender">Gender</Label>
+          <Select
+            id="gender"
+            required
+            value={gender}
+            onChange={(e) => setGender(e.target.value)}
+          >
+            <option value="">Select Gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </Select>
+        </div>
       </div>
-      </div>
-
-  
-     
 
       {/* Weight and Height */}
       <div className="grid grid-cols-2 gap-4">
@@ -167,75 +283,49 @@ const Register = ({ onRegisterSuccess }) => {
           />
         </div>
       </div>
-      {/* Weight and Height */}
+
+      {/* Activity Level */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="weight">Activity Level </Label>
+          <Label htmlFor="activity_level">Activity Level </Label>
           <Select
-          id="activity_level"
-          required
-          value={activity_level}
-          onChange={(e) => setLevel(e.target.value)}
-        >
-          <option value="">Select Activity Level</option>
-          <option value={1.2}>Sedentary</option>
-          <option value={1.375}>Lightly Active</option>
-          <option value={1.55}>Moderately Active</option>
-          <option value={1.725}>Very Active</option>
-          <option value={1.9}>Extra Active</option>
-  
-
-         
-        </Select>
-
+            id="activity_level"
+            required
+            value={activity_level}
+            onChange={(e) => setLevel(e.target.value)}
+          >
+            <option value="">Select Activity Level</option>
+            <option value={1.2}>Sedentary</option>
+            <option value={1.375}>Lightly Active</option>
+            <option value={1.55}>Moderately Active</option>
+            <option value={1.725}>Very Active</option>
+            <option value={1.9}>Extra Active</option>
+          </Select>
         </div>
-       
       </div>
 
       {/* Password */}
+      
       <div>
         <Label htmlFor="password">Password</Label>
-        <div className="relative">
-          <TextInput
-            id="password"
-            type={showPassword ? "text" : "password"}
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <a
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2"
-          >
-            {showPassword ? "Hide" : "Show"}
-          </a>
-        </div>
+        <PasswordInputChecker
+        password={password}
+        onChange={setPassword}
+      />
+       
       </div>
 
       {/* Re-enter Password */}
       <div>
         <Label htmlFor="password2">Re-enter Password</Label>
-        <div className="relative">
-          <TextInput
-            id="password2"
-            type={showPassword2 ? "text" : "password"}
-            required
-            value={password2}
-            onChange={(e) => setPassword2(e.target.value)}
-          />
-          <a
-            type="button"
-            onClick={() => setShowPassword2(!showPassword2)}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2"
-          >
-            {showPassword2 ? "Hide" : "Show"}
-          </a>
-        </div>
+        <PasswordInputChecker
+        password={password2}
+        onChange={setPassword2}
+      />
+        
       </div>
 
-      
-
-      <CustomButton onClick={handleSubmit} agreed={!loading} variant='cta'>
+      <CustomButton onClick={handleSubmit}  variant='cta'>
         {loading ? (
           <>
             <Spinner size="sm" className="mr-3" />

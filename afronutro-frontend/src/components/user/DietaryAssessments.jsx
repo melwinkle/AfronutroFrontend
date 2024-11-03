@@ -89,14 +89,14 @@ const DietaryAssessments = () => {
               borderColor={"afro-mint"}
               info={"health"}
             >
-              {assessment?.health_goals.length}
+              {assessment.health_goals? assessment.health_goals.length:0}
             </ProfileCircle>
             <ProfileCircle
               title={"Preferences"}
               borderColor={"afro-purple"}
               info={"dietary"}
             >
-              {assessment?.dietary_preferences.length}
+              {assessment.dietary_preferences?assessment.dietary_preferences.length:0}
             </ProfileCircle></div>
             
           </div>

@@ -9,30 +9,34 @@ const PlanCard = ({ description, calories, id, children }) => {
   const handlerecipe = () => {
     navigate(`/recipes/${id}`);
   };
+
   return (
-    <div className="border border-afro-gray-mid-light rounded space-y-12 p-2 w-64 h-48 relative">
-      <div className="absolute left-2 top-0 transform  -translate-y-1/2 h-20 w-20 rounded-full  ">
+    <div className="border border-afro-gray-mid-light rounded p-2 w-64 h-48 relative flex flex-col">
+      <div className="absolute left-2 top-0 transform -translate-y-1/2 h-20 w-20 rounded-full">
         <img
           src={food}
           alt="food"
           className="w-full h-full object-cover rounded-full border"
         />
       </div>
-      <div  >
-        <hr className="bg-afro-brown w-4/12 h-1 "></hr>
-        <h1 className="font-bold text-xl">{children}</h1>
-        <p className="text-afro-gray text-sm text-wrap">{description}</p>
-        <div className="flex space-x-4 justify-between items-center pt-4">
+      <div className="flex flex-col h-full pt-10">
+        <hr className="bg-afro-brown w-4/12 h-1 mb-2" />
+        <div className="flex-grow overflow-hidden">
+          <h1 className="font-bold text-xl line-clamp-1 mb-1">{children}</h1>
+          <p className="text-afro-gray text-sm line-clamp-2">{description}</p>
+        </div>
+        <div className="flex space-x-4 justify-between items-center mt-auto">
           <div className="w-3/4">
-            {" "}
-            <CustomButton variant="greenoutlines" length="primary" onClick={handlerecipe}>
+            <CustomButton 
+              variant="greenoutlines" 
+              length="primary" 
+              onClick={handlerecipe}
+            >
               See recipe
             </CustomButton>
           </div>
-
           <div className="flex space-x-1 w-1/2 items-center">
-            {/* svg */}
-            <img src={food} />
+            <img src={food} alt="food icon" />
             <p className="text-sm">{calories} kcal</p>
           </div>
         </div>
@@ -40,4 +44,5 @@ const PlanCard = ({ description, calories, id, children }) => {
     </div>
   );
 };
+
 export default PlanCard;

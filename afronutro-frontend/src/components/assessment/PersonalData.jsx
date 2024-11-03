@@ -62,10 +62,11 @@ const PersonalData = ({ nextStep, prevStep, updateFormData, data }) => {
 
   // Validate if all required fields are filled
   useEffect(() => {
-    const { name, age, weight, height } = personalData;
+    const { name, age, weight, height,gender } = personalData;
     const isValid = Boolean(
       name?.trim() && 
       age && 
+      gender &&
       weight && 
       height
     );
@@ -137,18 +138,18 @@ const PersonalData = ({ nextStep, prevStep, updateFormData, data }) => {
 
         {/*select for gender */}
         <div className="mb-4 w-1/2">
-        <label className="block text-sm font-bold mb-2">Gender</label>
-        <select
-        name="gender"
-        value={personalData.gender || ''}
-        onChange={handleChange}
-        className="border border-gray-300 p-2 rounded w-full"
-        >
-          <option value="">Select Gender</option>
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-        </select>
-        </div>
+  <label className="block text-sm font-bold mb-2">Gender</label>
+  <select
+    name="gender"
+    value={personalData.gender || ''} // Ensure default value is set correctly
+    onChange={handleChange}
+    className="border border-gray-300 p-2 rounded w-full"
+  >
+    <option value="" disabled>Select Gender</option> {/* Make this option disabled to prevent selection */}
+    <option value="male">Male</option>
+    <option value="female">Female</option>
+  </select>
+</div>
       </div>
 
       {/* Navigation buttons */}

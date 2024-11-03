@@ -1,4 +1,5 @@
 // Calculate BMI (Body Mass Index)
+
 export const calculateBMI = (height, weight) => {
   if (!height || !weight) return 0;
   return (weight / (height / 100) ** 2).toFixed(2); // Height in cm
@@ -18,8 +19,19 @@ export const getBMICategory = (bmi) => {
 
 // Calculate TDEE (Total Daily Energy Expenditure)
 // Formula: TDEE = BMR * Activity Level (simplified example)
-export const calculateTDEE = (weight, height, age, gender, activity_level) => {
-  if (!weight || !height || !age || !gender) return 0;
+export const calculateTDEE = (weight, height, dateOfBirth, gender, activity_level) => {
+  if (!weight || !height || !dateOfBirth || !gender) return 0;
+
+  // Calculate age from date of birth
+  const today = new Date();
+  const birthDate = new Date(dateOfBirth);
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+
+  // Adjust age if the birthday hasn't occurred yet this year
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
 
   // Harris-Benedict BMR formula
   const BMR =
@@ -27,9 +39,10 @@ export const calculateTDEE = (weight, height, age, gender, activity_level) => {
       ? 10 * weight + 6.25 * height - 5 * age + 5
       : 10 * weight + 6.25 * height - 5 * age - 161;
 
-  const activityLevel = activity_level; // Moderate exercise (example)
-  return (BMR * activityLevel).toFixed(0);
+  // Assuming activity_level is a multiplier for TDEE calculation
+  return (BMR * activity_level).toFixed(0);
 };
+
 export const getBmiBorderColor = (bmiCategory) => {
   switch (bmiCategory) {
     case "Underweight":

@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState,useEffect,useRef} from "react";
 import Tags from "../common/Tags"; // Adjust the import path based on your file structure
 import ContinueButton from "../common/ContinueButton";
 import taco from "../../assets/images/Taco.svg";
@@ -11,13 +11,17 @@ const Preferences = ({ nextStep, prevStep, updateFormData,data }) => {
 
   const dispatch = useDispatch();
   const {dietaryPreferences} = useSelector((state) => state.data);
+  const fetchContent=useRef(false);
 
 
   
 
   // Fetch activity levels when the component mounts
   useEffect(() => {
-    dispatch(fetchDietaryPreference());
+    if(!fetchContent.current){
+      dispatch(fetchDietaryPreference());
+      fetchContent.current=true;
+      }
   }, [dispatch]);
   
   // const preferencesArray = [

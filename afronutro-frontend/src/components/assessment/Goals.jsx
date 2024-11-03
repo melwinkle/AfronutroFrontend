@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState,useEffect,useRef } from "react";
 import Tags from "../common/Tags"; // Adjust the import path based on your file structure
 import ContinueButton from "../common/ContinueButton";
 import weight from "../../assets/images/weights.svg";
@@ -9,13 +9,17 @@ const Goals = ({ nextStep, prevStep, updateFormData,data }) => {
   // Sample goals array
   const dispatch = useDispatch();
   const {healthGoals} = useSelector((state) => state.data);
+  const fetchContent=useRef(false);
 
 
   
 
   // Fetch activity levels when the component mounts
   useEffect(() => {
-    dispatch(fetchHealthGoal());
+    if(fetchContent.current){
+      dispatch(fetchHealthGoal());
+      fetchContent.current=true;
+      }
   }, [dispatch]);
 
   // const goalsArray = [

@@ -11,7 +11,7 @@ import {
   get_meal_plan,
   save_meal_plan,
   delete_meal_plan,
-  customize_meal_plan
+  customize_meal_plan,
 } from "../../redux/slices/mealplansSlice";
 import { fetchRecipes } from "../../redux/slices/recipeSlice";
 import {
@@ -41,7 +41,7 @@ const MealPlanSingle = () => {
 
   const idRef = useRef(id); // Store the ID in a ref
   const isFetchingRef = useRef(false); // Ref to track fetching status
-  const fetchrecipesRef=useRef(false);
+  const fetchrecipesRef = useRef(false);
 
   const [showAddRecipeModal, setShowAddRecipeModal] = useState(false);
   const [mealType, setMealType] = useState("");
@@ -58,11 +58,11 @@ const MealPlanSingle = () => {
   //     fetchrecipesRef.current=true;
   //   }
   //   },[dispatch]);
-    
 
   useEffect(() => {
     const fetchMealPlan = async () => {
-      if (idRef.current && !isFetchingRef.current) { // Check if fetching is already in progress
+      if (idRef.current && !isFetchingRef.current) {
+        // Check if fetching is already in progress
         isFetchingRef.current = true; // Set fetching to true
 
         try {
@@ -116,11 +116,12 @@ const MealPlanSingle = () => {
     setShowAddRecipeModal(true);
   };
 
-
   const handleAddRecipes = async (meals_structure) => {
-    console.log(meals_structure)
+    console.log(meals_structure);
     try {
-      await dispatch(customize_meal_plan({ id, data: {meals_structure: meals_structure } })).unwrap();
+      await dispatch(
+        customize_meal_plan({ id, data: { meals_structure: meals_structure } })
+      ).unwrap();
       // // Show success message (e.g., Toast or Alert)
       // // Optionally refresh the meal plan after adding
       await dispatch(get_meal_plan(id)).unwrap();
@@ -129,7 +130,6 @@ const MealPlanSingle = () => {
       // Handle error (e.g., show an error message)
     }
   };
-  
 
   // Handle loading state
   if (loading) {
@@ -170,36 +170,46 @@ const MealPlanSingle = () => {
         </h1>
         <div className="flex space-x-4 w-1/12">
           {/* save */}
-          {
-            selectedmeal_plan?.status=="DR"?
+          {selectedmeal_plan?.status == "DR" ? (
             <a
-            className="rounded-full bg-white p-2"
-            onClick={handleSave}
-            disabled={saving}
-          >
-            <svg
-              class="w-6 h-6 text-afro-brown dark:text-white"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              fill="none"
-              viewBox="0 0 24 24"
+              className="rounded-full bg-white p-2"
+              onClick={handleSave}
+              disabled={saving}
             >
-              <path
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="m17 21-5-4-5 4V3.889a.92.92 0 0 1 .244-.629.808.808 0 0 1 .59-.26h8.333a.81.81 0 0 1 .589.26.92.92 0 0 1 .244.63V21Z"
-              />
-            </svg>
-          </a>: <a className="rounded-full bg-white p-2"><svg class="w-6 h-6 text-afro-brown dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-  <path d="M7.833 2c-.507 0-.98.216-1.318.576A1.92 1.92 0 0 0 6 3.89V21a1 1 0 0 0 1.625.78L12 18.28l4.375 3.5A1 1 0 0 0 18 21V3.889c0-.481-.178-.954-.515-1.313A1.808 1.808 0 0 0 16.167 2H7.833Z"/>
-</svg></a>
+              <svg
+                class="w-6 h-6 text-afro-brown dark:text-white"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="m17 21-5-4-5 4V3.889a.92.92 0 0 1 .244-.629.808.808 0 0 1 .59-.26h8.333a.81.81 0 0 1 .589.26.92.92 0 0 1 .244.63V21Z"
+                />
+              </svg>
+            </a>
+          ) : (
+            <a className="rounded-full bg-white p-2">
+              <svg
+                class="w-6 h-6 text-afro-brown dark:text-white"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M7.833 2c-.507 0-.98.216-1.318.576A1.92 1.92 0 0 0 6 3.89V21a1 1 0 0 0 1.625.78L12 18.28l4.375 3.5A1 1 0 0 0 18 21V3.889c0-.481-.178-.954-.515-1.313A1.808 1.808 0 0 0 16.167 2H7.833Z" />
+              </svg>
+            </a>
+          )}
 
-          }
-          
           {/* delete */}
 
           <a
@@ -248,6 +258,10 @@ const MealPlanSingle = () => {
               {selectedmeal_plan?.tags.dietary_preferences
                 ?.map((val) => getLabelByValue(val))
                 .join(",")}
+                ,
+              {selectedmeal_plan?.tags.cuisine_preference
+                ?.map((val) => val)
+                .join(",")}
             </p>
           </div>
         </div>
@@ -281,7 +295,7 @@ const MealPlanSingle = () => {
         <div className="flex flex-col space-y-4 mt-8">
           <div className="flex  space-x-2 ">
             <MealType color="breakfast">Breakfast</MealType>
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-2 space-y-10 md:space-y-0 ">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-2  space-y-10 md:space-y-0 ">
               {meals_structure.breakfast.map((meal, index) => (
                 <PlanCard
                   description={meal.recipe_info}
@@ -291,12 +305,15 @@ const MealPlanSingle = () => {
                   {meal.name}
                 </PlanCard>
               ))}
-              <AddNew onAdd={() => handleAddNew("breakfast")} />
+              {meals_structure.breakfast.length !== 4 && (
+                <AddNew onAdd={() => handleAddNew("breakfast")} />
+                )}
+    
             </div>
           </div>
           <div className="flex space-x-2 flex-wrap pt-8">
             <MealType color="lunch">Lunch</MealType>
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-2 space-y-10 md:space-y-0 ">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-2  space-y-10 md:space-y-0 ">
               {meals_structure.lunch.map((meal, index) => (
                 <PlanCard
                   description={meal.recipe_info}
@@ -306,13 +323,16 @@ const MealPlanSingle = () => {
                   {meal.name}
                 </PlanCard>
               ))}
+              {meals_structure.lunch.length !== 4 && (
+                <AddNew onAdd={() => handleAddNew("lunch")} />
+                )}
 
-              <AddNew onAdd={() => handleAddNew("lunch")}/>
+             
             </div>
           </div>
           <div className="flex space-x-2 flex-wrap pt-8">
             <MealType color="dinner">Dinner</MealType>
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-2 space-y-10 md:space-y-0 ">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-2  space-y-10 md:space-y-0 ">
               {meals_structure.dinner.map((meal, index) => (
                 <PlanCard
                   description={meal.recipe_info}
@@ -322,13 +342,17 @@ const MealPlanSingle = () => {
                   {meal.name}
                 </PlanCard>
               ))}
-
-              <AddNew onAdd={() => handleAddNew("dinner")} />
+              {/* if the length of the dinner lements is equal to 4 then dont show add new else show */}
+              {meals_structure.dinner.length !== 4 && (
+                <AddNew onAdd={() => handleAddNew("dinner")} />
+                )}
+                
             </div>
+
           </div>
           <div className="flex space-x-2 flex-wrap pt-8">
             <MealType color="snack">Snack</MealType>
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-2 space-y-10 md:space-y-0 ">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-2  space-y-10 md:space-y-0 ">
               {meals_structure.snack.map((meal, index) => (
                 <PlanCard
                   description={meal.recipe_info}
@@ -338,8 +362,10 @@ const MealPlanSingle = () => {
                   {meal.name}
                 </PlanCard>
               ))}
+              {meals_structure.snack.length !== 4 && (
+                <AddNew onAdd={() => handleAddNew("snack")} />
+                )}
 
-              <AddNew onAdd={() => handleAddNew("snack")}/>
             </div>
           </div>
         </div>

@@ -86,55 +86,55 @@ export const get_educational_content_filter = (type) => {
 
 // get recipes/
 export const get_recipes = () => {
-  return api.get('recipes/');
+  return api.get('recipes/recipes/');
   }
 
   // get specific recipe/id/
   export const get_recipe_id = (id) => {
-    return api.get(`recipes/${id}/`);
+    return api.get(`recipes/recipes/${id}/`);
     }
 
 // filter recipes-filter/ multiple params
 export const get_recipes_filter = (params) => {
-  return api.get(`recipes-filter/?${params}`);
+  return api.get(`recipes/recipes-filter/?${params}`);
   }
 
   // recipes-search/?query=Stew
   export const get_recipes_search = (query) => {
-    return api.get(`recipes-search/?query=${query}`);
+    return api.get(`recipes/recipes-search/?query=${query}`);
     }
   
   // recipes-filter/?meal_type=lunch
   export const get_recipes_filter_meal_type = (meal_type) => {
-    return api.get(`recipes-filter/?meal_type=${meal_type}`);
+    return api.get(`recipes/recipes-filter/?meal_type=${meal_type}`);
     }
   
 
   // get /nutrition/V0Ivzw6Y/
   export const get_recipe_nutrition = (id) => {
-    return api.get(`nutrition/${id}/`);
+    return api.get(`recipes/nutrition/${id}/`);
   }
 
 
   // get ingredients/
   export const get_ingredients = () => {
-    return api.get('ingredients/');
+    return api.get('recipes/ingredients/');
     }
 
 // post rating/recipe id/ with data rating and comment 
 export const post_rating = (id, data) => {
-  return api.post(`rating/${id}/`, data);
+  return api.post(`recipes/rating/${id}/`, data);
 }
 
 // get rating/recipe id
 export const get_rating = (id) => {
-  return api.get(`rating/${id}/`);
+  return api.get(`recipes/rating/${id}/`);
   }
 
 
   // get all ratings ratings/
   export const get_ratings = (recipeIds) => {
-    return axios.get('ratings/', {
+    return axios.get('recipes/ratings/', {
       params: {
         recipe_ids: recipeIds, // Just pass the array without [] in the key
       },
@@ -143,17 +143,17 @@ export const get_rating = (id) => {
 
 // add favorites/recipei id
 export const add_favorite = (id) => {
-  return api.post(`favorites/${id}/`);
+  return api.post(`recipes/favorites/${id}/`);
 }
 
 // remove favorites/recipei id
 export const remove_favorite = (id) => {
-  return api.delete(`favorites/${id}/`);
+  return api.delete(`recipes/favorites/${id}/`);
   }
 
   // get favorites/
   export const get_favorites = () => {
-    return api.get('favorites/');
+    return api.get('recipes/favorites/');
     }
   
 
@@ -224,7 +224,7 @@ export const customize_meal_plans = (id,data) => {
   // get activity level, health goal, dietary preference, tag type, dish type, cusine type, meal type
 
   export const get_tags_type = () => {
-    return api.get('tags/');
+    return api.get('recipes/tags/');
   }
   
   export const get_activity_level = () => {
@@ -240,15 +240,15 @@ export const customize_meal_plans = (id,data) => {
   }
   
   export const get_meal_type = () => {
-    return api.get('meal-type/');
+    return api.get('recipes/meal-type/');
   }
   
   export const get_dish_type = () => {
-    return api.get('dish-type/');
+    return api.get('recipes/dish-type/');
   }
   
   export const get_cuisine_type = () => {
-    return api.get('cuisine-type/');
+    return api.get('recipes/cuisine-type/');
   }
   
   

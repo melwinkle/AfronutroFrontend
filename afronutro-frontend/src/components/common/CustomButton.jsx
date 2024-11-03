@@ -1,7 +1,10 @@
 import React from 'react';
 
-const CustomButton = ({ children, onClick, variant = 'primary',length= 'primary',type="button" }) => {
-  const baseClasses = 'py-2 px-4 transition-colors font-medium ';
+const CustomButton = ({ children, onClick, variant = 'primary',length= 'primary',type="button",agreed=true }) => {
+  const baseClasses = `${agreed
+    ? "cursor-pointer "
+    : "bg-gray-400 text-gray-700 cursor-not-allowed"} 'py-2 px-4 transition-colors font-medium`;
+  
   
   const variants = {
     primary: 'bg-afro-green hover:bg-afro-teal text-white rounded-full ',
@@ -27,6 +30,7 @@ const CustomButton = ({ children, onClick, variant = 'primary',length= 'primary'
       className={`${baseClasses} ${variants[variant]} ${lengths[length]}`}
       onClick={onClick}
       type={type}
+      disabled={!agreed}
     >
       {children}
     </button>
