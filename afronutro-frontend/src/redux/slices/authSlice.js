@@ -13,21 +13,15 @@ import {
   update_profile,
   updateactive
 } from "../../services/api.js"; // Import your API functions
+import { REHYDRATE } from 'redux-persist';
 
-const setToken = (token) => {
-  localStorage.setItem("token", token);
-};
 
-const removeToken = () => {
-  localStorage.removeItem("token");
-};
 
 export const registerUser = createAsyncThunk(
   "auth/register",
   async (userData, { rejectWithValue }) => {
     try {
       const response = await register(userData);
-      setToken(response.data.token);
       return response.data;
     } catch (error) {
       console.log(error)
@@ -40,9 +34,13 @@ export const loginUser = createAsyncThunk(
   "auth/login",
   async ({ email, password }, { rejectWithValue }) => {
     try {
-      const response = await login(email, password);
-      setToken(response.data.token);
-      return response.data; // Combine token and user data
+      const loginResponse = await login(email, password);
+      
+      // After successful login, immediately get the user profile
+      const profileResponse = await get_profile();
+      
+      // Return both the auth info and user profile
+      return profileResponse.data;
     } catch (error) {
       console.error("Login error:", error);
       if (error.code === "ECONNABORTED") {
@@ -60,14 +58,14 @@ export const logoutUser = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       await logout();
-      localStorage.removeItem("user");
-      removeToken();
       return null;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
   }
 );
+
+
 
 
 // send request
@@ -142,7 +140,6 @@ export const getProfile = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await get_profile();
-      localStorage.setItem('user', JSON.stringify(response.data));
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -189,9 +186,8 @@ export const activateUser = createAsyncThunk(
 const authSlice = createSlice({
   name: "auth",
   initialState: {
-    user: JSON.parse(localStorage.getItem("user")) || null,
-    token: localStorage.getItem("token"),
-    isAuthenticated: !!localStorage.getItem("token"),
+    user:  null,
+    isAuthenticated: false,
     loading: false,
     error: null,
     resetStatus: null,
@@ -202,6 +198,7 @@ const authSlice = createSlice({
   verificationError: null,
   resendVerificationStatus: null,
   resendVerificationError: null,
+  pendingVerificationEmail: null,
   },
   reducers: {
     clearError: (state) => {
@@ -224,10 +221,22 @@ const authSlice = createSlice({
       state.resendVerificationError = null;
     },
     handleRegistrationSuccess: (state) => {
-      localStorage.removeItem("token");
-      state.token = null;
       state.isAuthenticated = false;
     },
+    setPendingVerificationEmail: (state, action) => {
+      state.pendingVerificationEmail = action.payload;
+    },
+    setAuthenticated: (state, action) => {
+      state.isAuthenticated = action.payload;
+    },
+    setUser: (state, action) => {
+      state.user = action.payload;
+      state.isAuthenticated = true; // Set authenticated when user is set
+    },
+    clearAuth: (state) => {
+      state.user = null;
+      state.isAuthenticated = false;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -237,7 +246,6 @@ const authSlice = createSlice({
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.user = action.payload.user;
-        state.token = action.payload.token;
         state.isAuthenticated = true;
         state.loading = false;
       })
@@ -245,13 +253,23 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+      .addCase(REHYDRATE, (state, action) => {
+        // If there's persisted auth data, use it
+        if (action.payload?.auth) {
+          return {
+            ...state,
+            ...action.payload.auth,
+            loading: false,
+          };
+        }
+        return state;
+      })
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
-        state.user = action.payload.user;
-        state.token = action.payload.token;
+        state.user = action.payload;
         state.isAuthenticated = true;
         state.loading = false;
       })
@@ -261,12 +279,23 @@ const authSlice = createSlice({
       })
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;
-        state.token = null;
         state.isAuthenticated = false;
+      })
+      .addCase(getProfile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
       })
       .addCase(getProfile.fulfilled, (state, action) => {
         state.user = action.payload; // Assuming the response structure returns user data
+        state.isAuthenticated = true;
+        state.loading = false;
       })
+      .addCase(getProfile.rejected, (state) => {
+        state.user = null;
+        state.isAuthenticated = false;
+        state.loading = false;
+      })
+      
       .addCase(resetConfirmation.pending, (state) => {
         state.resetStatus = 'pending';
         state.resetError = null;
@@ -324,5 +353,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { clearError, clearResetStatus, clearPasswordChangeStatus,clearVerificationStatus,clearResendVerificationStatus,handleRegistrationSuccess } = authSlice.actions;
+export const { clearError, clearResetStatus, clearPasswordChangeStatus,clearVerificationStatus,clearResendVerificationStatus,handleRegistrationSuccess,setPendingVerificationEmail,setAuthenticated,setUser,clearAuth } = authSlice.actions;
 export default authSlice.reducer;

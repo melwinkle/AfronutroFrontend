@@ -8,7 +8,7 @@ import Modal from "../common/Modal"; // Assuming you have a modal component or c
 import CustomButton from "../common/CustomButton";
 import { useNavigate,useLocation } from "react-router-dom";
 import { registerUser,logoutUser } from "../../redux/slices/authSlice";
-import { fetchDietaryAssessment,createDietaryAssessment } from "../../redux/slices/assessmentSlice";
+import { fetchDietaryAssessment,createDietaryAssessment,setFormData,setHasRegistered,clearFormData } from "../../redux/slices/assessmentSlice";
 import EmailVerificationModal from "../modal/EmailVerificationModal";
 import { Alert } from "flowbite-react";
 import { calculateBMI,calculateTDEE,getActivityLevelV } from "../../utils/helper";
@@ -23,25 +23,11 @@ const FinalAssessment = ({ formData, nextStep }) => {
   const [showModal, setShowModal] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showVerificationAlert, setShowVerificationAlert] = useState(false);
-  const [persistedFormData, setPersistedFormData] = useState(formData);
-  const [hasRegistered, setHasRegistered] = useState(false);
+  const persistedFormData = useSelector((state) => state.assessment.formData);
+  const hasRegistered = useSelector((state) => state.assessment.hasRegistered);
   const location = useLocation();
 
-  // Load persisted form data and registration status on component mount
-  useEffect(() => {
-    const savedFormData = localStorage.getItem('assessmentFormData');
-    const registrationStatus = localStorage.getItem('hasRegistered');
-    
-    if (savedFormData) {
-      setPersistedFormData(JSON.parse(savedFormData));
-    } else if (formData) {
-      setPersistedFormData(formData);
-    }
-
-    if (registrationStatus) {
-      setHasRegistered(JSON.parse(registrationStatus));
-    }
-  }, [formData]);
+  
 
   // Only fetch assessment if user is authenticated and active, and hasn't just registered
   useEffect(() => {
@@ -50,40 +36,28 @@ const FinalAssessment = ({ formData, nextStep }) => {
     }
   }, [isAuthenticated, user?.is_active, hasRegistered, dispatch]);
 
-  // Save form data to localStorage when it changes
+  
   useEffect(() => {
     if (formData) {
-      localStorage.setItem('assessmentFormData', JSON.stringify(formData));
-      setPersistedFormData(formData);
+      dispatch(setFormData(formData));
     }
-  }, [formData]);
+  }, [formData, dispatch]);
 
 
 
-useEffect(() => {
-  
-  
-  const clearLocalStorageData = () => {
-    localStorage.removeItem('assessmentFormData');
-    localStorage.removeItem('hasRegistered');
-  };
+  useEffect(() => {
+    const shouldClearData = !location.pathname.includes('/mealgenerator');
+    
+    if (shouldClearData) {
+      dispatch(clearFormData());
+    }
 
-  const handleBeforeUnload = (event) => {
-    clearLocalStorageData();
-  };
-
-  // Clear data when location changes and new path doesn't include '/assessment'
-  if (!location.pathname.includes('/mealgenerator')) {
-    clearLocalStorageData();
-  }
-
-  // Handle browser close/refresh
-  window.addEventListener('beforeunload', handleBeforeUnload);
-
-  return () => {
-    window.removeEventListener('beforeunload', handleBeforeUnload);
-  };
-}, [useLocation().pathname]); // Add location.pathname as dependency
+    return () => {
+      if (shouldClearData) {
+        dispatch(clearFormData());
+      }
+    };
+  }, [location.pathname, dispatch]);
 
   // Safe access to form data with fallbacks
   const safeFormData = persistedFormData || formData || {
@@ -143,8 +117,7 @@ useEffect(() => {
       await dispatch(createDietaryAssessment(assessmentData)).unwrap();
       await dispatch(logoutUser()).unwrap();
 
-      setHasRegistered(true);
-      localStorage.setItem('hasRegistered', 'true');
+      dispatch(setHasRegistered(true));
       
       setShowModal(false);
       setShowVerificationAlert(true);
@@ -167,8 +140,7 @@ useEffect(() => {
 
   // Clear persisted data when leaving the assessment flow
   const handleLater = () => {
-    localStorage.removeItem('assessmentFormData');
-    localStorage.removeItem('hasRegistered');
+    dispatch(clearFormData());
     navigate('/assessment');
   };
 

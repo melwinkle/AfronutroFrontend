@@ -3,19 +3,41 @@ import CustomButton from "../common/CustomButton";
 import NutritionCircle from "../common/NutritionCircle";
 import ProfileCircle from "../common/ProfileCircle";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
-import { updateProfile,resetPassword } from "../../redux/slices/authSlice.js"; // Import updateProfile function from authSlice
+import { Navigate } from "react-router-dom"; // Import useNavigate
+import { updateProfile,resetPassword,getProfile } from "../../redux/slices/authSlice.js"; // Import updateProfile function from authSlice
 import { calculateBMI, calculateTDEE,getActivityLevel,getBMICategory,getBmiBorderColor} from "../../utils/helper.js"; // Import helper functions
 import { recalculateDietaryAssessment,fetchDietaryAssessment } from "../../redux/slices/assessmentSlice.js";
 import { useRef } from "react";
+import { setAuthenticated } from "../../redux/slices/authSlice.js";
 
 const Profile = () => {
   const user = useSelector((state) => state.auth.user);
-  const navigate = useNavigate(); // Initialize useNavigate
   const { isAuthenticated } = useSelector((state) => state.auth); // Get authentication state
   const dispatch = useDispatch();
   const {assessment}=useSelector((state)=>state.assessment);
   const fetchAssesment=useRef(false);
+
+  const profileFetched = useRef(false);
+
+  // Fetch profile data if not available
+  useEffect(() => {
+    if (!user && !isAuthenticated) {
+      dispatch(getProfile());
+    }
+  }, [dispatch, user, isAuthenticated]);
+
+  // Initialize form data after user data is available
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        username: user.username,
+        gender: user.gender || "Male",
+        weight: user.weight || 0.0,
+        height: user.height || 0.0,
+        activity_levels: user.activity_levels || 1.55
+      });
+    }
+  }, [user]);
 
 
   // State to manage edit mode and input values
@@ -67,12 +89,16 @@ const Profile = () => {
     dispatch(resetPassword({email:user.email}));
     }
 
-  useEffect(() => {
-    // Check if the user is not authenticated
-    if (!isAuthenticated) {
-      navigate("/"); // Redirect to home if not authenticated
-    }
-  }, [isAuthenticated, navigate]);
+    useEffect(() => {
+      if (user && !isAuthenticated) {
+        // If we have a user but isAuthenticated is false, fix the state
+        dispatch(setAuthenticated(true));
+      }
+    }, [user, isAuthenticated, dispatch]);
+
+ 
+
+  
 
   // Calculate missing TDEE and BMI
   const bmi = user?.bmi || calculateBMI(formData.height, formData.weight);
@@ -83,6 +109,11 @@ const Profile = () => {
 
 //   request password change
 // deactivte account 
+
+if (!isAuthenticated) {
+  console.log('Redirecting due to no auth');
+  return <Navigate to="/" replace />;
+}
 
   return (
     <div className="flex flex-col space-y-4">

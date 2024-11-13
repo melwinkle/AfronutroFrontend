@@ -2,7 +2,7 @@ import React, { useState,useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, TextInput, Label, Spinner } from 'flowbite-react';
 import CustomButton from '../common/CustomButton';
-import { loginUser, clearError,getProfile } from '../../redux/slices/authSlice.js';
+import { loginUser, clearError,getProfile,clearAuth } from '../../redux/slices/authSlice.js';
 import { validateEmail } from '../../utils/helper.js';
 
 const Login = ({onLoginSuccess}) => {
@@ -15,12 +15,13 @@ const Login = ({onLoginSuccess}) => {
   const dispatch = useDispatch();
   const { loading, error, isAuthenticated } = useSelector((state) => state.auth);
 
+
+
   useEffect(() => {
     if (isAuthenticated) {
-        dispatch(getProfile({ token: localStorage.getItem("token") }));
-        onLoginSuccess();
+      onLoginSuccess();
     }
-  }, [isAuthenticated, dispatch,onLoginSuccess]);
+  }, [isAuthenticated, onLoginSuccess]);
 
   useEffect(() => {
     return () => {
@@ -28,7 +29,7 @@ const Login = ({onLoginSuccess}) => {
     };
   }, [dispatch]);
 
-  const handleSubmit =  () => {
+  const handleSubmit =  async () => {
     // e.preventDefault();
     setValidationError('');
 
@@ -43,7 +44,12 @@ const Login = ({onLoginSuccess}) => {
     }
 
 
-    dispatch(loginUser(credential));
+    try {
+      await dispatch(loginUser(credential)).unwrap();
+      // The auth state will be updated automatically through the reducer
+    } catch (error) {
+      console.error('Login failed:', error);
+    }
   };
 
 

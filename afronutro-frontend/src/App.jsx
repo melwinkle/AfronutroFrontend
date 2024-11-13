@@ -1,7 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import store from './redux/store';
+import { PersistGate } from 'redux-persist/integration/react';
+import store,{persistor } from './redux/store';
 import Layout from './components/navigation/Layout';
 import Home from './components/home/Home';
 import FAQS from './components/utilities/FAQs';
@@ -27,6 +28,12 @@ import SearchResultsPage from './components/utilities/SearchResults';
 function App() {
   return (
     <Provider store={store}>
+      <PersistGate loading={<div>Loading...</div>} 
+        persistor={persistor}
+        onBeforeLift={() => {
+          // Optional: do something before the state is rehydrated
+          console.log('Rehydrating state...');
+        }}>
     <Router>
       <div className="w-screen">
       <Layout>
@@ -54,6 +61,7 @@ function App() {
       </Layout>
       </div>
     </Router>
+    </PersistGate>
     </Provider>
   );
 }

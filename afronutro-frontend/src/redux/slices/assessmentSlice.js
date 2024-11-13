@@ -78,6 +78,8 @@ const initialState = {
   loading: false,
   error: null,
   status: 'idle', // 'idle' | 'pending' | 'succeeded' | 'failed'
+  hasRegistered: false,
+  formData: null,
 };
 
 const assessmentSlice = createSlice({
@@ -88,6 +90,16 @@ const assessmentSlice = createSlice({
       state.assessment = null;
       state.error = null;
       state.status = 'idle';
+    },
+    setHasRegistered: (state, action) => {
+      state.hasRegistered = action.payload;
+    },
+    setFormData: (state, action) => {
+      state.formData = action.payload;
+    },
+    clearFormData: (state) => {
+      state.formData = null;
+      state.hasRegistered = false;
     },
   },
   extraReducers: (builder) => {
@@ -176,5 +188,5 @@ const assessmentSlice = createSlice({
   },
 });
 
-export const { clearAssessment } = assessmentSlice.actions;
+export const { clearAssessment, setHasRegistered, setFormData, clearFormData } = assessmentSlice.actions;
 export default assessmentSlice.reducer;

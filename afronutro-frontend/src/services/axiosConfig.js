@@ -7,17 +7,15 @@ const api = axios.create({
     headers: {
       'Content-Type': 'application/json'
     },
+    withCredentials: true,
     timeout: 10000 // 10 seconds timeout
   });
 
 
 // Request interceptor
+// Remove token handling from request interceptor since we're using cookies
 api.interceptors.request.use(
   (config) => {
-    const token = store.getState().auth.token;
-    if (token) {
-      config.headers['Authorization'] = `Token ${token}`;
-    }
     return config;
   },
   (error) => {
@@ -27,23 +25,21 @@ api.interceptors.request.use(
 
 // Response interceptor (optional, but can be useful for handling token expiration)
 api.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-        const originalRequest = error.config;
-        // Check if error.response is defined
-        if (error.response) {
-            if (error.response.status === 401 && !originalRequest._retry) {
-                originalRequest._retry = true;
-                // Implement token refresh logic if needed
-                store.dispatch(logoutUser ());
-            } else if (error.code === 'ECONNABORTED' && error.message.includes('timeout')) {
-                console.log('Request timed out');
-            }
-        } else {
-            console.error('Network or server error:', error.message);
-        }
-        return Promise.reject(error);
-    }
+  (response) => response,
+  async (error) => {
+      const originalRequest = error.config;
+      if (error.response) {
+          if (error.response.status === 401 && !originalRequest._retry) {
+              originalRequest._retry = true;
+              store.dispatch(logoutUser());
+          } else if (error.code === 'ECONNABORTED' && error.message.includes('timeout')) {
+              console.log('Request timed out');
+          }
+      } else {
+          console.error('Network or server error:', error.message);
+      }
+      return Promise.reject(error);
+  }
 );
 
 export default api;

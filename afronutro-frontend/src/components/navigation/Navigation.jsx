@@ -9,14 +9,18 @@ import Login from '../auth/Login';
 import Register from '../auth/Register';
 import Logout from "../auth/Logout.jsx";
 import SearchComponent from "../common/SearchComponent.jsx";
+import { useDispatch } from "react-redux";
+import { setAuthenticated } from "../../redux/slices/authSlice.js";
 
 const Navigation = () => {
+  const dispatch = useDispatch();
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   const { isAuthenticated } = useSelector((state) => state.auth);
+
   const user = useSelector((state) => state.auth.user);
 
   const toggleUserDropdown = () => {
@@ -49,6 +53,20 @@ const Navigation = () => {
     // Clean up the event listener when the component unmounts
     return () => window.removeEventListener('resize', updateButtonText);
   }, []);
+
+
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      if (user && !isAuthenticated) {
+        dispatch(setAuthenticated(true));
+      }
+    };
+
+    checkAuthStatus();
+  }, [dispatch, user, isAuthenticated]);
+
+
+
   return (
     <nav class=" dark:bg-gray-900  w-full">
       <div className="w-full flex flex-wrap md:flex-nowrap items-center  p-2 ">
