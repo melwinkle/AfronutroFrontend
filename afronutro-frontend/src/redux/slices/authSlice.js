@@ -14,6 +14,7 @@ import {
   updateactive
 } from "../../services/api.js"; // Import your API functions
 import { REHYDRATE } from 'redux-persist';
+import { persistor } from '../store'; // Import persistor
 
 
 
@@ -58,6 +59,7 @@ export const logoutUser = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       await logout();
+      await persistor.purge();
       return null;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -280,6 +282,8 @@ const authSlice = createSlice({
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;
         state.isAuthenticated = false;
+        state.loading = false;
+        state.error = null;
       })
       .addCase(getProfile.pending, (state) => {
         state.loading = true;

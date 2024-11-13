@@ -9,8 +9,10 @@ export const login = (email, password) => {
   return api.post('login/', JSON.stringify({ email, password }));
 };
 
-export const logout = () => {
-  return api.post('logout/', JSON.stringify({}));
+export const logout = async () => {
+  return await api.post('/logout/', {}, { 
+    withCredentials: true 
+  });
 };
 
 // request change
