@@ -15,14 +15,7 @@ const DashboardLayout = ({ children }) => {
     }
   }, [dispatch, user, isAuthenticated]);
 
-  useEffect(() => {
-    console.log('Auth State:', { 
-      isAuthenticated, 
-      loading, 
-      hasUser: !!user,
-      userData: user 
-    });
-  }, [isAuthenticated, loading, user]);
+
 
   if (loading) {
     return <div>Loading...</div>;
