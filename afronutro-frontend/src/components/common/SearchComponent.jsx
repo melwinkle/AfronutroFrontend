@@ -20,19 +20,20 @@ const SearchComponent = () => {
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (searchRef.current && !searchRef.current.contains(event.target)) {
+      if (searchRef.current && !searchRef.current.contains(event.target)&&showResults) {
         setShowResults(false);
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  }, [showResults]);
 
   const handleSearch = (e) => {
     const query = e.target.value;
+    console.log('Search Query:', query);
     setSearchQuery(query);
-    setShowResults(true);
+    
 
     // Clear existing timeout
     if (searchTimeout) {
@@ -43,6 +44,7 @@ const SearchComponent = () => {
     const timeoutId = setTimeout(() => {
       if (query.trim()) {
         dispatch(searchRecipes(query));
+        setShowResults(true);
       }
     }, 300);
 

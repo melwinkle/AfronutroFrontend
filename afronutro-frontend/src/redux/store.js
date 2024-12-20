@@ -9,6 +9,8 @@ import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
 
+{/* This is the root of the redux store. It is used to combine all the reducers and middlewares. */}
+
 const persistConfig = {
   key: 'auth',
   storage,
@@ -36,8 +38,5 @@ const store = configureStore({
 
 const persistor = persistStore(store);
 
-// Export persistor as named export
 export { persistor };
-
-// Export store as default export
 export default store;
