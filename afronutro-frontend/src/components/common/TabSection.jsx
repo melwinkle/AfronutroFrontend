@@ -65,12 +65,12 @@ const TabSection = ({ tabs, filters, contentList }) => {
       </div>
       <div className="mt-4 ">
         {processedContent.length > 0 ? (
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-2">
             {processedContent.map((content) => (
               <ContentCard
                 key={content.content_id}
                 title={content.title}
-                img={fruits}
+                img={content.content_image}
                 id={content.content_id}
               >
                 {content.description}

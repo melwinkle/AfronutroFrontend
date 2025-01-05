@@ -210,17 +210,25 @@ export const  calculateTotalNutrients=(nutritionalComposition)=>{
 
 
 
-export const organizeMealsByType=(mealsStructure, mealsArray)=>{
-  // Create a mapping of meal names to their full data for quick lookup
+export const organizeMealsByType = (mealsStructure, mealsArray) => {
+  // Create a mapping of recipe_id to meal details for quick lookup
   const mealsDataMap = mealsArray.reduce((map, meal) => {
-    map[meal.name] = meal;
+    map[meal.recipe_id] = meal;
     return map;
   }, {});
 
   // Structure the meals based on meal types in meals_structure
   const organizedMeals = {};
-  for (const [mealType, mealNames] of Object.entries(mealsStructure)) {
-    organizedMeals[mealType] = mealNames.map(name => mealsDataMap[name]).filter(Boolean);
+  for (const [mealType, meals] of Object.entries(mealsStructure)) {
+    // Ensure meals is an array
+    if (Array.isArray(meals)) {
+      organizedMeals[mealType] = meals.map(meal => ({
+        ...meal,
+        ...mealsDataMap[meal.recipe_id]
+      })).filter(Boolean);
+    } else {
+      organizedMeals[mealType] = [];
+    }
   }
 
   return organizedMeals;

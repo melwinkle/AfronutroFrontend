@@ -33,14 +33,17 @@ const Navigation = () => {
   const isActiveLink = (path) => location.pathname === path;
 
   const [buttonText, setButtonText] = useState('Start');
+  const [isGenerator, setIsGenerator] = useState('Generator');
 
   useEffect(() => {
     // Function to check screen size and update button text
     const updateButtonText = () => {
       if (window.innerWidth >= 1024) {  // lg screen size in Tailwind is 1024px
         setButtonText('Get Started');
+        setIsGenerator('Meal Generator');
       } else {
         setButtonText('Start');
+        setIsGenerator('Generator');
       }
     };
 
@@ -132,7 +135,7 @@ const Navigation = () => {
                     : "text-gray-900"
                 }  hover:text-afro-brown dark:text-white`}
               >
-                Meal Generator
+                {isGenerator}
               </Link>
             </li>
             <li>

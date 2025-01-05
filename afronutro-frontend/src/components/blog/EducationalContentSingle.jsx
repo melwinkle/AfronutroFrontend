@@ -22,9 +22,9 @@ const EducationalContentSingle=()=>{
     return(
         <div>
            
-            <div className="bg-afro-mint h-96 flex flex-col items-center justify-center bg-opacity-55 p-4 text-center ">
+            <div className="bg-[url('assets/images/citrus.png')] bg-cover bg-center bg-afro-mint h-96 flex flex-col items-center justify-center bg-opacity-55 p-4 text-center ">
                 <h1 className="font-bold text-3xl md:text-5xl text-afro-brown">{contentDetail?.title} </h1>
-                <p className="text-afro-gray-mid">{contentDetail?.description}</p>
+                <p className="text-afro-gray-mid line-clamp-1">{contentDetail?.description}</p>
 
 
             </div>
@@ -32,7 +32,7 @@ const EducationalContentSingle=()=>{
             <div  className="p-4">
             <BackButton/>
                 <p className="text-justify">
-                    The age of time i slike aponkey and kakra
+                    {contentDetail?.description}
                 </p>
             </div>
 

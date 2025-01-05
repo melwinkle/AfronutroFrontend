@@ -7,6 +7,7 @@ import Navigation from './Navigation';
 const Layout = ({ children }) => {
   const location = useLocation();
   const isHomePage = location.pathname === '/';
+  const isContactPage = location.pathname === '/faqs';
   return (
     <div className={`flex flex-col h-screen overflow-auto ${isHomePage ? 'bg-afro-light' : 'bg-white'}`}>
       {/* <Header />*/}
@@ -14,7 +15,7 @@ const Layout = ({ children }) => {
       <main className="flex-grow">
         {children}
       </main>
-     <Footer />
+      {(isHomePage || isContactPage) && <Footer />}
     </div>
   );
 };

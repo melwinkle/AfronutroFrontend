@@ -160,7 +160,9 @@ const MealPlanSingle = () => {
     selectedmeal_plan?.meals
   );
 
-  // console.log(meals_structure)
+  console.log(selectedmeal_plan?.nutritional_composition);
+
+  
 
   return (
     <div className="space-y-2 flex-grow pb-8">
@@ -317,7 +319,7 @@ const MealPlanSingle = () => {
               {meals_structure.lunch.map((meal, index) => (
                 <PlanCard
                   description={meal.recipe_info}
-                  calories={meal.nutrition.calories}
+                  calories={meal.calories}
                   id={meal.recipe_id}
                 >
                   {meal.name}
@@ -353,15 +355,18 @@ const MealPlanSingle = () => {
           <div className="flex space-x-2 flex-wrap pt-8">
             <MealType color="snack">Snack</MealType>
             <div className="grid grid-cols-1 md:grid-cols-5 gap-2  space-y-10 md:space-y-0 ">
-              {meals_structure.snack.map((meal, index) => (
+              {meals_structure.snack.map((meal, index) => {
+                console.log(meal);
+                return (
                 <PlanCard
                   description={meal.recipe_info}
-                  calories={meal.nutrition.calories}
+                  calories={meal.calories}
                   id={meal.recipe_id}
                 >
                   {meal.name}
                 </PlanCard>
-              ))}
+                )
+              })}
               {meals_structure.snack.length !== 4 && (
                 <AddNew onAdd={() => handleAddNew("snack")} />
                 )}

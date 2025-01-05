@@ -12,6 +12,7 @@ const AddRecipeModal = ({ showModal, onClose, mealType, onAdd, tags, meals }) =>
 
   // State to handle suggestions
   const [showSuggestions, setShowSuggestions] = useState(false);
+  
 
   useEffect(() => {
     if (showModal) {
@@ -41,11 +42,20 @@ const AddRecipeModal = ({ showModal, onClose, mealType, onAdd, tags, meals }) =>
       // Merge the selected recipes into the existing meals structure
       const updatedMealsStructure = {
         ...existingMealsStructure,
-        [mealType]:selectedRecipes // Add selected recipes
-        
+        [mealType]: [
+          ...selectedRecipes.map(recipe => ({
+            name: recipe.name,
+            recipe_id: recipe.recipe_id,
+            calories: recipe.calories,
+            fat: recipe.fat,
+            protein: recipe.protein,
+            carbs: recipe.carbs,
+            final_score: 1
+          }))
+        ]
       };
 
-      // Call the onAdd callback with the meals_structure
+      // Call the onAdd callback with the updated meals_structure
       onAdd(updatedMealsStructure);
       onClose();
     } catch (err) {
@@ -53,10 +63,21 @@ const AddRecipeModal = ({ showModal, onClose, mealType, onAdd, tags, meals }) =>
     }
   };
 
-  const handleRecipeSelect = (recipeId) => {
-    // Prevent adding duplicate recipe names
-    if (!selectedRecipes.includes(recipeId)) {
-      setSelectedRecipes([...selectedRecipes, recipeId]);
+  const handleRecipeSelect = (recipe) => {
+    // Extract necessary properties and set final_score to 1
+    const selectedRecipe = {
+      recipe_id: recipe.recipe_id,
+      name: recipe.name,
+      calories: recipe.nutrition.calories,
+      fat: recipe.nutrition.fat,
+      protein: recipe.nutrition.protein,
+      carbs: recipe.nutrition.carbs,
+      final_score: 1
+    };
+  
+    // Prevent adding duplicate recipes
+    if (!selectedRecipes.some(selected => selected.recipe_id === selectedRecipe.recipe_id)) {
+      setSelectedRecipes([...selectedRecipes, selectedRecipe]);
     }
     setSearchTerm("");
     setShowSuggestions(false);
@@ -71,6 +92,8 @@ const AddRecipeModal = ({ showModal, onClose, mealType, onAdd, tags, meals }) =>
     setSearchTerm(searchTerm);
     setShowSuggestions(searchTerm !== "");
   };
+
+  console.log(selectedRecipes);
 
   const filteredRecipes = useMemo(() => {
     return recipesList
@@ -115,7 +138,7 @@ const AddRecipeModal = ({ showModal, onClose, mealType, onAdd, tags, meals }) =>
           <label className="block text-sm font-medium mb-2">Selected Recipes</label>
           <div className="flex flex-wrap gap-2 mb-2">
             {selectedRecipes.map((recipeName) => {
-              const recipe = recipesList.find(r => r.name === recipeName);
+              const recipe = recipesList.find(r => r.name === recipeName.name);
               return (
                 <span
                   key={recipeName}
@@ -162,7 +185,7 @@ const AddRecipeModal = ({ showModal, onClose, mealType, onAdd, tags, meals }) =>
                 <div
                   key={recipe.id}
                   className="p-2 hover:bg-gray-100 cursor-pointer"
-                  onClick={() => handleRecipeSelect(recipe.name)} // Add only the recipe name
+                  onClick={() => handleRecipeSelect(recipe)} // Add only the recipe name
                 >
                   {recipe.name}
                 </div>

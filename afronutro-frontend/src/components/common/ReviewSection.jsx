@@ -13,7 +13,7 @@ const topRatings = sortedRatings.slice(0, 4);
 
 
   // Check if the user has already reviewed the recipe
-  const userReview = ratings.find((review) => review.user === user.id);
+  const userReview = ratings.find((review) => review.user === user?.id);
 
   const handleRatingSubmit = async () => {
     if (!isAuthenticated) {

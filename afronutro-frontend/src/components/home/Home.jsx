@@ -1,30 +1,28 @@
-import React,{useEffect,useRef} from "react";
+import React, { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import fruits from "../../assets/images/fruitsv1.png";
 import plan from "../../assets/images/afronutroplanning.png";
 import fruity from "../../assets/images/fruits.png";
 import cultural from "../../assets/images/afronutrocultural.png";
-import phone from "../../assets/images/afronutromobile.png"
+import phone from "../../assets/images/afronutromobile.png";
 import CustomButton from "../common/CustomButton";
 import MissionCards from "../common/MissionCard";
 import ContentCard from "../common/ContentCard";
-import { useDispatch,useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchEducationalContent } from "../../redux/slices/contentSlice";
 
 const Home = () => {
   const dispatch = useDispatch();
   const { contentList, loading, error } = useSelector((state) => state.content);
-  const fetchContent=useRef(false);
-  
+  const fetchContent = useRef(false);
+
   // Fetch content on mount
   useEffect(() => {
-    if(!fetchContent.current){
+    if (!fetchContent.current) {
       dispatch(fetchEducationalContent());
-      fetchContent.current=true;
-      }
-
+      fetchContent.current = true;
+    }
   }, [dispatch]);
-  
 
   return (
     <div className="w-full bg-afro-light ">
@@ -106,60 +104,90 @@ const Home = () => {
         <div className="flex flex-row items-center justify-start w-full">
           <div className="flex flex-col space-y-2 w-1/2 ">
             <p className="text-afro-gray text-xs">Have 3 mins?</p>
-            <h1 className="font-bold text-afro-brown  text-3xl md:text-5xl"><span className="text-afro-green font-extralight">Get your</span> personalized meal <br/>plan</h1>
-            <CustomButton length="cta">TAKE  QUIZ</CustomButton>
+            <h1 className="font-bold text-afro-brown  text-3xl md:text-5xl">
+              <span className="text-afro-green font-extralight">Get your</span>{" "}
+              personalized meal <br />
+              plan
+            </h1>
+            <CustomButton length="cta">TAKE QUIZ</CustomButton>
           </div>
-          <div className="mt-4 flex justify-center items-center  overflow-hidden" style={{ height: '80%' }}>
-            <img src={phone} className="object-cover h-1/2"/>
+          <div
+            className="mt-4 flex justify-center items-center  overflow-hidden"
+            style={{ height: "80%" }}
+          >
+            <img src={phone} className="object-cover h-1/2" />
           </div>
-          
-
         </div>
-
       </section>
       <section className="bg-white">
-        <div>
-        <h2 className="text-afro-dark text-center mt-2 md:pt-6 pb-2 text-2xl md:text-4xl font-bold ">
-          Expand Your Nutrition Knowledge
-        </h2>
+        <div className="p-2">
+          <h2 className="text-afro-dark text-center mt-2 md:pt-6 pb-2 text-2xl md:text-4xl font-bold ">
+            Expand Your Nutrition Knowledge
+          </h2>
         </div>
-        
-          {loading?(
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-      {[1, 2, 3].map((placeholder) => (
-        <div key={placeholder} className="border rounded-lg p-4 animate-pulse">
-          <div className="w-full h-48 bg-gray-200 rounded-md"></div>
-          <div className="h-4 bg-gray-200 rounded mt-4 w-3/4"></div>
-          <div className="h-4 bg-gray-200 rounded mt-2 w-1/2"></div>
+
+        <div className="mx-4 pb-2">
+
+        {loading ? (
+          <div className="grid grid-cols-3   gap-2">
+            {[1, 2, 3].map((placeholder) => (
+              <div
+                key={placeholder}
+                className="border rounded-lg p-4 animate-pulse"
+              >
+                <div className="w-full h-48 bg-gray-200 rounded-md"></div>
+                <div className="h-4 bg-gray-200 rounded mt-4 w-3/4"></div>
+                <div className="h-4 bg-gray-200 rounded mt-2 w-1/2"></div>
+              </div>
+            ))}
+          </div>
+        ) : contentList.length > 0 ? (
+          <div className="grid  lg:grid-cols-3  grid-cols-1 gap-2">
+          {
+          contentList.slice(0, 3).map((content, index) => (
+            <ContentCard
+              key={index}
+              title={content.title}
+              img={content.content_image}
+              id={content.content_id}
+            >
+              {content.description}
+            </ContentCard>
+          ))
+          }
+          </div>
+        ) : (
+          <div className="grid grid-cols-3 mx-4 p-4 gap-8">
+            <ContentCard
+              img={fruits}
+              title="Benefits of peppers in Ghanaian dishes"
+              id="fruits"
+            >
+              Peppers have jadfkj psbhdfos fpj h;sohfsf hwfvksgf s lsbf kjlf
+              shls llhsiulfh lshf dfhl sahfl dbflsabil h dslfbi lslnfpshfb
+              lksjdfb lsifbiulksjydfilsgflsgf{" "}
+            </ContentCard>
+            <ContentCard
+              img={fruits}
+              title="Benefits of peppers in Ghanaian dishes"
+              id={2}
+            >
+              Peppers have jadfkj psbhdfos fpj h;sohfsf hwfvksgf s lsbf kjlf
+              shls llhsiulfh lshf dfhl sahfl dbflsabil h dslfbi lslnfpshfb
+              lksjdfb lsifbiulksjydfilsgflsgf{" "}
+            </ContentCard>
+            <ContentCard
+              img={fruits}
+              title="Benefits of peppers in Ghanaian dishes"
+              id={3}
+            >
+              Peppers have jadfkj psbhdfos fpj h;sohfsf hwfvksgf s lsbf kjlf
+              shls llhsiulfh lshf dfhl sahfl dbflsabil h dslfbi lslnfpshfb
+              lksjdfb lsifbiulksjydfilsgflsgf{" "}
+            </ContentCard>
+          </div>
+        )}
         </div>
-      ))}
-    </div>
-  ):(
-
-
-
-  
-
-    contentList.length>0? ( 
-          contentList.slice(0,3).map((content, index) => (
-
-
-      <ContentCard 
-        key={index}
-        title={content.title} 
-        img={fruits} 
-        id={content.content_id}
-      >
-        {content.description}
-      </ContentCard>
-    ))):(
-  <div className="grid grid-cols-3 mx-4 p-4 gap-8">
-    <ContentCard img={fruits} title="Benefits of peppers in Ghanaian dishes" id="fruits">Peppers have jadfkj psbhdfos fpj h;sohfsf hwfvksgf s lsbf kjlf shls llhsiulfh lshf dfhl sahfl dbflsabil h dslfbi lslnfpshfb lksjdfb lsifbiulksjydfilsgflsgf </ContentCard>
-    <ContentCard img={fruits} title="Benefits of peppers in Ghanaian dishes" id={2}>Peppers have jadfkj psbhdfos fpj h;sohfsf hwfvksgf s lsbf kjlf shls llhsiulfh lshf dfhl sahfl dbflsabil h dslfbi lslnfpshfb lksjdfb lsifbiulksjydfilsgflsgf </ContentCard>
-    <ContentCard img={fruits} title="Benefits of peppers in Ghanaian dishes" id={3}>Peppers have jadfkj psbhdfos fpj h;sohfsf hwfvksgf s lsbf kjlf shls llhsiulfh lshf dfhl sahfl dbflsabil h dslfbi lslnfpshfb lksjdfb lsifbiulksjydfilsgflsgf </ContentCard>
-  </div>))}
-  
-
       </section>
     </div>
   );
