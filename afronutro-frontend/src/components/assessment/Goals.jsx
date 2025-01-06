@@ -16,7 +16,7 @@ const Goals = ({ nextStep, prevStep, updateFormData,data }) => {
 
   // Fetch activity levels when the component mounts
   useEffect(() => {
-    if(fetchContent.current){
+    if(!fetchContent.current){
       dispatch(fetchHealthGoal());
       fetchContent.current=true;
       }

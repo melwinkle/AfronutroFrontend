@@ -233,3 +233,31 @@ export const organizeMealsByType = (mealsStructure, mealsArray) => {
 
   return organizedMeals;
 }
+
+// Function to calculate the average final score of a meal plan
+export const calculateAverageFinalScore = (mealsStructure) => {
+  // Initialize an empty array to store the final scores
+  const finalScores = [];
+
+  // Iterate over each meal type in the meals structure
+  for (const mealType in mealsStructure) {
+    // Extract the meals for the current meal type
+    const meals = mealsStructure[mealType];
+
+    // Ensure meals is an array
+    if (Array.isArray(meals) && meals.length > 0) {
+      // Calculate the average final score for the current meal type
+      const averageFinalScore = meals.reduce((total, meal) => {
+        return total + meal.final_score;
+      }, 0) / meals.length;
+
+      // Add the average final score to the finalScores array
+      finalScores.push(averageFinalScore);
+    }
+  }
+
+  // Return the average final score
+  return finalScores.length > 0
+    ? finalScores.reduce((total, score) => total + score, 0) / finalScores.length
+    : 0;
+};

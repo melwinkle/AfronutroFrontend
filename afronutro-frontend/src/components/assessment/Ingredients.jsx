@@ -45,9 +45,11 @@ const Ingredients = ({ nextStep, prevStep, updateFormData,data }) => {
 
 
  // Filter ingredients based on search term
- const filteredIngredients = ingredients.filter((ingredient) =>
-  ingredient.name.toLowerCase().includes(searchTerm.toLowerCase())
-);
+ const filteredIngredients = ingredients
+    .filter((ingredient) =>
+      ingredient.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .slice(0, 20); // Only show the top 20 ingredients
 
   const handleNext = () => {
     updateFormData({ disliked_ingredients: selectedIngredients });

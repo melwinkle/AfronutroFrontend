@@ -12,7 +12,7 @@ const LikedIngredients = ({ nextStep, prevStep, updateFormData ,data}) => {
   const fetchContent=useRef(false);
   // Fetch ingredients on component mount
   useEffect(() => {
-    if(fetchContent.current){
+    if(!fetchContent.current){
       dispatch(fetchIngredients());
       fetchContent.current=true;
       }
@@ -43,9 +43,11 @@ const LikedIngredients = ({ nextStep, prevStep, updateFormData ,data}) => {
     }
   }, [data]);
   // Filter ingredients based on search term
-  const filteredIngredients = ingredients.filter((ingredient) =>
-    ingredient.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredIngredients = ingredients
+    .filter((ingredient) =>
+      ingredient.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .slice(0, 20); // Only show the top 20 ingredients
 
   const handleNext = () => {
     updateFormData({ liked_ingredients: selectedIngredients });

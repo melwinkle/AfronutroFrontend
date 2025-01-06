@@ -19,6 +19,7 @@ import {
   getGoalLabelByValue,
   calculateTotalNutrients,
   organizeMealsByType,
+  calculateAverageFinalScore,
 } from "../../utils/helper";
 import CustomButton from "../common/CustomButton";
 import { Spinner, Modal, ModalHeader, ModalBody } from "flowbite-react";
@@ -160,7 +161,8 @@ const MealPlanSingle = () => {
     selectedmeal_plan?.meals
   );
 
-  console.log(selectedmeal_plan?.nutritional_composition);
+// function to calcuate avergage fianl score
+  const average_final_score = calculateAverageFinalScore(selectedmeal_plan?.meals_structure);
 
   
 
@@ -250,6 +252,9 @@ const MealPlanSingle = () => {
             <p className="text-justify p-2 italic font-light">
               {selectedmeal_plan?.description}
             </p>
+            <p className="text-justify p-2 italic font-bold text-lg ">
+              Average Recommendation Confidence: {(average_final_score*100).toFixed(2)}%
+            </p>  
 
             <p>
               Tags:
@@ -303,6 +308,7 @@ const MealPlanSingle = () => {
                   description={meal.recipe_info}
                   calories={meal.nutrition.calories}
                   id={meal.recipe_id}
+                  final_score={meal.final_score}
                 >
                   {meal.name}
                 </PlanCard>
@@ -321,6 +327,7 @@ const MealPlanSingle = () => {
                   description={meal.recipe_info}
                   calories={meal.calories}
                   id={meal.recipe_id}
+                  final_score={meal.final_score}
                 >
                   {meal.name}
                 </PlanCard>
@@ -340,6 +347,7 @@ const MealPlanSingle = () => {
                   description={meal.recipe_info}
                   calories={meal.nutrition.calories}
                   id={meal.recipe_id}
+                  final_score={meal.final_score}
                 >
                   {meal.name}
                 </PlanCard>
@@ -362,6 +370,7 @@ const MealPlanSingle = () => {
                   description={meal.recipe_info}
                   calories={meal.calories}
                   id={meal.recipe_id}
+                  final_score={meal.final_score}
                 >
                   {meal.name}
                 </PlanCard>

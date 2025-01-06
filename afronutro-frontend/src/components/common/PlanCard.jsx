@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import CustomButton from "./CustomButton";
 import food from "../../assets/images/Food.svg";
 
-const PlanCard = ({ description, calories, id, children }) => {
+const PlanCard = ({ description, calories, id, children, final_score }) => {
   const navigate = useNavigate();
 
   const handlerecipe = () => {
@@ -12,12 +12,20 @@ const PlanCard = ({ description, calories, id, children }) => {
 
   return (
     <div className="border border-afro-gray-mid-light rounded p-2 w-64 h-48 relative flex flex-col">
+      
+      <div className="flex">
       <div className="absolute left-2 top-0 transform -translate-y-1/2 h-20 w-20 rounded-full">
         <img
           src={food}
           alt="food"
           className="w-full h-full object-cover rounded-full border"
         />
+      </div>
+      {/* put final socre on teh top right of teh card */}
+      <div className="absolute right-2 top-4 ">
+        <p className="text-afro-green font-bold text-sm mt-1">{(final_score*100).toFixed(2)}% confidence </p>
+      </div>
+
       </div>
       <div className="flex flex-col h-full pt-10">
         <hr className="bg-afro-brown w-4/12 h-1 mb-2" />
